@@ -11,5 +11,6 @@ namespace Nspiration.NspirationDBContext
         }
         public DbSet<Color> Color { get; set; }
         public DbSet<ColorFamily> ColorFamily { get; set; }
+        public DbSet<Folder> Folder { get; set; }
     }
 }

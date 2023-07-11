@@ -22,6 +22,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddTransient<IColorBl, ColorBl>();
 builder.Services.AddTransient<IColorBr, ColorBr>();
+builder.Services.AddTransient<IFolderBl, FolderBl>();
+builder.Services.AddTransient<IFolderBr, FolderBr>();
 
 // Add services to the container.
 
