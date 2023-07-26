@@ -10,9 +10,9 @@ namespace Nspiration.Controllers
     public class FolderController : Controller
     {
         private readonly IFolderBl folderBl;
-        public FolderController(IFolderBl _ifolderBl)
+        public FolderController(IFolderBl _folderBl)
         {
-            folderBl = _ifolderBl;
+            folderBl = _folderBl;
         }
         [HttpPost("addfolder")]
         public async Task<IActionResult> AddFolder([FromBody] FolderRequestModel folderRequestModel)

@@ -24,6 +24,10 @@ builder.Services.AddTransient<IColorBl, ColorBl>();
 builder.Services.AddTransient<IColorBr, ColorBr>();
 builder.Services.AddTransient<IFolderBl, FolderBl>();
 builder.Services.AddTransient<IFolderBr, FolderBr>();
+builder.Services.AddTransient<IProjectBl, ProjectBl>();
+builder.Services.AddTransient<IProjectBr, ProjectBr>();
+builder.Services.AddTransient<IUserBl, UserBl>();
+builder.Services.AddTransient<IUserBr, UserBr>();
 
 // Add services to the container.
 
@@ -33,6 +37,9 @@ builder.Services.AddLogging(builder => builder.AddFluentMigratorConsole())
                 .ConfigureRunner(builder => builder.AddPostgres()
                 .WithGlobalConnectionString("NspirationDB")
                 .ScanIn(typeof(AddColorTable_20230704483398).Assembly).For.Migrations().For.EmbeddedResources());
+builder.Services.AddDbContext<NspirationPortalOldDBContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("NspirationPortalOldDB")));
+//builder.Services.ConfigureRunner(builder => builder.AddSqlServer()
+//                .WithGlobalConnectionString("NspirationPortalOldDB"));
 
 
 builder.Services.AddControllers();

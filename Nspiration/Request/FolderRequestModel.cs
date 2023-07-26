@@ -18,5 +18,4 @@
         public string Name { get; set; }
         public long ModifiedBy { get; set;}
     }
-
 }

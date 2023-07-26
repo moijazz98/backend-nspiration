@@ -41,6 +41,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "EntityFrameworkCore.DataEncryption": {
+              "target": "Package",
+              "version": "[4.0.1, )"
+            },
             "FluentMigrator": {
               "target": "Package",
               "version": "[3.3.2, )"
@@ -72,6 +76,10 @@
               "version": "[7.0.8, )"
             },
             "Microsoft.EntityFrameworkCore.Relational": {
+              "target": "Package",
+              "version": "[7.0.8, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
               "version": "[7.0.8, )"
             },

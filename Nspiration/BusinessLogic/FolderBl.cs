@@ -13,7 +13,7 @@ namespace Nspiration.BusinessLogic
             folderBr=_folderBr;
         }
 
-        public async Task<string> AddFolder(FolderRequestModel folderRequest)
+        public async Task<SucessOrErrorResponse> AddFolder(FolderRequestModel folderRequest)
         {
             return await folderBr.AddFolder(folderRequest);
         }
@@ -22,12 +22,12 @@ namespace Nspiration.BusinessLogic
         {
             return await folderBr.GetAllFolder(projectId);
         }
-        public async Task<string> DeleteFolder(DeleteFolderRequestModel deleteFolder)
+        public async Task<SucessOrErrorResponse> DeleteFolder(DeleteFolderRequestModel deleteFolder)
         {
             return await folderBr.DeleteFolder(deleteFolder);
         }
 
-        public async Task<string> RenameFolder(RenameFolderRequestModel renameFolder)
+        public async Task<SucessOrErrorResponse> RenameFolder(RenameFolderRequestModel renameFolder)
         {
             return await folderBr.RenameFolder(renameFolder);
         }

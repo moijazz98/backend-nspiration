@@ -15,16 +15,19 @@ namespace Nspiration.BusinessRepository
         {
             nspirationDBContext = _nspirationDBContext;
         }
-        public async Task<string> AddFolder(FolderRequestModel folderRequest)
+        
+        public async Task<SucessOrErrorResponse> AddFolder(FolderRequestModel folderRequest)
         {
             using (IDbContextTransaction transaction = nspirationDBContext.Database.BeginTransaction())
             {
+                SucessOrErrorResponse response = new SucessOrErrorResponse();
                 try
                 {
                     if (nspirationDBContext.Folder.Where(x => x.IsActive == true).Any(x => x.ProjectId == folderRequest.ProjectId && x.Name == folderRequest.Name))
                     {
                         await transaction.CommitAsync();
-                        return "Folder Name already exists";
+                        response.Message= "Folder Name already exists";
+                        return response;
                     }
                     else
                     {
@@ -39,19 +42,18 @@ namespace Nspiration.BusinessRepository
                         nspirationDBContext.Folder.Add(folder);
                         await nspirationDBContext.SaveChangesAsync();
                         transaction.Commit();
-                        return $"Folder Id {folder.Id} Created";
+                        response.Message= $"Folder Id {folder.Id} Created";
+                        return response;
                     }
                 }
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    return "Failed to Create";
+                    response.Message = "Failed to Create";
+                    return response;
                 }
             }
-
         }
-
-
 
         public async Task<List<FolderResponseModel>> GetAllFolder(long projectId)
         {
@@ -65,10 +67,11 @@ namespace Nspiration.BusinessRepository
                                                                    }).OrderBy(x => x.Name).ToListAsync();
             return folderResponseModel;
         }
-        public async Task<string> DeleteFolder(DeleteFolderRequestModel deleteFolder)
+        public async Task<SucessOrErrorResponse> DeleteFolder(DeleteFolderRequestModel deleteFolder)
         {
             using (IDbContextTransaction transaction = nspirationDBContext.Database.BeginTransaction())
             {
+                SucessOrErrorResponse response = new SucessOrErrorResponse();
                 try
                 {
                     foreach (var folderId in deleteFolder.FolderId)
@@ -86,27 +89,30 @@ namespace Nspiration.BusinessRepository
                     }
                     await nspirationDBContext.SaveChangesAsync();
                     await transaction.CommitAsync();
-                    return "Folder deleted sucessfully";
+                    response.Message= "Folder deleted sucessfully";
+                    return response;
                 }
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    return "Failed to Delete";
+                    response.Message= "Failed to Delete";
+                    return response;
                 }
-
             }
         }
 
-        public async Task<string> RenameFolder(RenameFolderRequestModel renameFolder)
+        public async Task<SucessOrErrorResponse> RenameFolder(RenameFolderRequestModel renameFolder)
         {
             using (IDbContextTransaction transaction = nspirationDBContext.Database.BeginTransaction())
             {
+                SucessOrErrorResponse response = new SucessOrErrorResponse();
                 try
                 {
                     if (nspirationDBContext.Folder.Where(x => x.IsActive == true).Any(x => x.ProjectId == renameFolder.ProjectId && x.Name == renameFolder.Name))
                     {
                         await transaction.CommitAsync();
-                        return "Folder Name already exists";
+                        response.Message= "Folder Name already exists";
+                        return response;
                     }
                     else
                     {
@@ -119,13 +125,15 @@ namespace Nspiration.BusinessRepository
                         nspirationDBContext.Update(folder);
                         nspirationDBContext.SaveChanges();
                         await transaction.CommitAsync();
-                        return "Renamed Sucessfully";
+                        response.Message= "Renamed Sucessfully";
+                        return response;
                     }
                 }
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    return "Failed to Rename";
+                    response.Message= "Failed to Rename";
+                    return response;
                 }
             }
         }
