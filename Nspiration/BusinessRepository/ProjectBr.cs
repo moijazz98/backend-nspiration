@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Nspiration.BusinessRepository.IBusinessRepository;
 using Nspiration.NspirationDBContext;
+using Nspiration.Request;
 using Nspiration.Response;
 
 namespace Nspiration.BusinessRepository
@@ -30,6 +31,35 @@ namespace Nspiration.BusinessRepository
                                                                DealerPhoneNumber = "12345",
                                                            }).FirstOrDefaultAsync();
             return projectInfo;
+        }
+
+        public async Task<List<ProjectListResponse>> GetVendorProjectList(ProjectListRequest projRequest)
+        {
+            try
+            {
+                string startupPath = System.IO.Directory.GetCurrentDirectory();
+
+                List<ProjectListResponse> projectList = await(from p in nspirationPortalOldDBContext.tblProjectTx
+                                                              join d in nspirationPortalOldDBContext.tblDepotM
+                                                              on p.DepotId equals d.DepotId
+                                                              where d.OperationalTeamId == projRequest.VendorId &&
+                                                              (projRequest.ProjectId == 0 || p.iProjectId == projRequest.ProjectId)
+                                                              orderby p.dtCreationDate descending
+                                                              select new ProjectListResponse
+                                                              {
+                                                                  iProjectId = p.iProjectId,
+                                                                  sProjectName = p.sProjectName,
+                                                                  sSiteImage = (p.sSiteImage == null ? "Image not found" : startupPath + @"\\ProjectImages\\Site-sampleImg.jpg"),
+                                                                  dtActionDate = p.dtActionDate
+
+                                                              }).Take(10).ToListAsync();
+
+                return projectList;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
         }
     }
 }

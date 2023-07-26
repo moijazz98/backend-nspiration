@@ -14,5 +14,9 @@ namespace Nspiration.Model
         public int iCreatedBy { get; set; }
         //public string? SalesOfficerPhoneNumber { get; set; }
         //public string DealerPhoneNumber { get; set; }
+        public string sSiteImage { get; set; }
+        public DateTime dtActionDate { get; set; }
+        public DateTime dtCreationDate { get; set; }
+        public int DepotId { get; set; }
     }
 }

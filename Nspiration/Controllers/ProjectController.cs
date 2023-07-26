@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Nspiration.BusinessLogic.IBusinessLogic;
+using Nspiration.Request;
 
 namespace Nspiration.Controllers
 {
@@ -21,6 +22,20 @@ namespace Nspiration.Controllers
                 return Ok(response);
             }
             return NoContent();
+        }
+
+        [HttpPost("GetProjectList")]
+        public async Task<IActionResult> VendorProjectList([FromBody] ProjectListRequest projRequest)
+        {
+            if (projRequest.VendorId != null && projRequest.VendorId !=0)
+            {
+                var getuserList = await projectBl.GetVendorProjectList(projRequest);
+                return Ok(getuserList);
+            }
+            else
+            {
+                return NotFound("Invaid VendorId!!!!");
+            }                         
         }
     }
 }

@@ -11,5 +11,6 @@ namespace Nspiration.NspirationDBContext
         }
         public DbSet<tblProjectTx> tblProjectTx { get; set; }
         public DbSet<tblUserM> tblUserM { get; set; }
+        public DbSet<tblDepotM> tblDepotM { get; set; }
     }
 }

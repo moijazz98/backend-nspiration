@@ -1,5 +1,6 @@
 ﻿using Nspiration.BusinessLogic.IBusinessLogic;
 using Nspiration.BusinessRepository.IBusinessRepository;
+using Nspiration.Request;
 using Nspiration.Response;
 
 namespace Nspiration.BusinessLogic
@@ -14,6 +15,11 @@ namespace Nspiration.BusinessLogic
         public async Task<ProjectInfoResponseModel?> GetProjectInfo(int requstId)
         {
             return await projectBr.GetProjectInfo(requstId);
+        }
+
+        public async Task<List<ProjectListResponse>> GetVendorProjectList(ProjectListRequest projRequest)
+        {
+            return await projectBr.GetVendorProjectList(projRequest);             
         }
     }
 }
