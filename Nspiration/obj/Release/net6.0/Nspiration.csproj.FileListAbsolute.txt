@@ -110,3 +110,4 @@ C:\Users\LTP-1\source\repos\backend-nspiration\backend-nspiration\Nspiration\bin
 C:\Users\LTP-1\source\repos\backend-nspiration\backend-nspiration\Nspiration\bin\Release\net6.0\Microsoft.SqlServer.Server.dll
 C:\Users\LTP-1\source\repos\backend-nspiration\backend-nspiration\Nspiration\bin\Release\net6.0\System.Memory.Data.dll
 C:\Users\LTP-1\source\repos\backend-nspiration\backend-nspiration\Nspiration\bin\Release\net6.0\EntityFrameworkCore.DataEncryption.dll
+C:\Users\LTP-1\source\repos\backend-nspiration\backend-nspiration\Nspiration\bin\Release\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

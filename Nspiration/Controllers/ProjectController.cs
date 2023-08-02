@@ -37,5 +37,15 @@ namespace Nspiration.Controllers
                 return NotFound("Invaid VendorId!!!!");
             }                         
         }
+        [HttpPost("addprojectdetails")]
+        public async Task<IActionResult> AddFolder([FromBody] FromGimpRequestModel fromGimpRequest)
+        {
+            var response = await projectBl.AddProjectDetailsFromGimp(fromGimpRequest);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            return NoContent();
+        }
     }
 }

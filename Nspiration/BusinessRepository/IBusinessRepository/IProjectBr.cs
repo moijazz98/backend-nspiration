@@ -7,5 +7,6 @@ namespace Nspiration.BusinessRepository.IBusinessRepository
     {
         public Task<ProjectInfoResponseModel?> GetProjectInfo(int requstId);
         public Task<List<ProjectListResponse>> GetVendorProjectList(ProjectListRequest projRequest);
+        public Task<SucessOrErrorResponse> AddProjectDetailsFromGimp(FromGimpRequestModel fromGimpRequest);
     }
 }

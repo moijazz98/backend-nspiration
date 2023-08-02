@@ -12,6 +12,9 @@ namespace Nspiration.BusinessLogic
         {
             projectBr = _projectBr;
         }
+
+       
+
         public async Task<ProjectInfoResponseModel?> GetProjectInfo(int requstId)
         {
             return await projectBr.GetProjectInfo(requstId);
@@ -20,6 +23,10 @@ namespace Nspiration.BusinessLogic
         public async Task<List<ProjectListResponse>> GetVendorProjectList(ProjectListRequest projRequest)
         {
             return await projectBr.GetVendorProjectList(projRequest);             
+        }
+        public async Task<SucessOrErrorResponse> AddProjectDetailsFromGimp(FromGimpRequestModel fromGimpRequest)
+        {
+            return await projectBr.AddProjectDetailsFromGimp(fromGimpRequest);
         }
     }
 }

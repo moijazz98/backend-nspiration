@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "j10Dc67dHa4RJXVdnKx/JhNxR0bCJeIMY37sgEPN7iMVigS8edHRn09ioVKkkqyhfyTVYE7CbgImySTAjc+Eiw==",
+  "dgSpecHash": "QIFHCjxzlpsD6cjWAR2LG0IXDSXT9v5ecpZdBNERm63Om7cJyF8QpPK1EGgkY7pdcmrjbYQakbGyEw2NLflJmw==",
   "success": true,
   "projectFilePath": "C:\\Users\\LTP-1\\source\\repos\\backend-nspiration\\backend-nspiration\\Nspiration\\Nspiration.csproj",
   "expectedPackageFiles": [
@@ -28,6 +28,7 @@
     "C:\\Users\\LTP-1\\.nuget\\packages\\fluentmigrator.runner.sqlserverce\\3.3.2\\fluentmigrator.runner.sqlserverce.3.3.2.nupkg.sha512",
     "C:\\Users\\LTP-1\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\LTP-1\\.nuget\\packages\\microsoft.aspnet.cors\\5.2.9\\microsoft.aspnet.cors.5.2.9.nupkg.sha512",
+    "C:\\Users\\LTP-1\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\6.0.20\\microsoft.aspnetcore.authentication.jwtbearer.6.0.20.nupkg.sha512",
     "C:\\Users\\LTP-1\\.nuget\\packages\\microsoft.aspnetcore.cors\\2.2.0\\microsoft.aspnetcore.cors.2.2.0.nupkg.sha512",
     "C:\\Users\\LTP-1\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.2.0\\microsoft.aspnetcore.http.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\LTP-1\\.nuget\\packages\\microsoft.aspnetcore.http.extensions\\2.2.0\\microsoft.aspnetcore.http.extensions.2.2.0.nupkg.sha512",

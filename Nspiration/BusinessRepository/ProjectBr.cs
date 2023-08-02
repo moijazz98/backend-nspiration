@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Nspiration.BusinessRepository.IBusinessRepository;
+using Nspiration.Model;
 using Nspiration.NspirationDBContext;
 using Nspiration.Request;
 using Nspiration.Response;
@@ -9,10 +11,14 @@ namespace Nspiration.BusinessRepository
     public class ProjectBr:IProjectBr
     {
         public readonly NspirationPortalOldDBContext nspirationPortalOldDBContext;
-        public ProjectBr(NspirationPortalOldDBContext _nspirationPortalOldDBContext)
+        public readonly NspirationDbContext nspirationDbContext;
+        public ProjectBr(NspirationPortalOldDBContext _nspirationPortalOldDBContext, NspirationDbContext _nspirationDbContext)
         {
             nspirationPortalOldDBContext = _nspirationPortalOldDBContext;
+            nspirationDbContext = _nspirationDbContext;
         }
+
+        
 
         public async Task<ProjectInfoResponseModel?> GetProjectInfo(int requestId)
         {
@@ -59,6 +65,61 @@ namespace Nspiration.BusinessRepository
             catch (Exception ex)
             {
                 throw new Exception(ex.ToString());
+            }
+        }
+        public async Task<SucessOrErrorResponse> AddProjectDetailsFromGimp(FromGimpRequestModel fromGimpRequest)
+        {
+            using (IDbContextTransaction transaction = nspirationDbContext.Database.BeginTransaction())
+            {
+                SucessOrErrorResponse response = new SucessOrErrorResponse();
+                try
+                {
+                    ProjectExistingToNew projectExistingToNew = new ProjectExistingToNew
+                    {
+                        ProjectRequestId = fromGimpRequest.ProjectRequestId,
+                        VendorId = fromGimpRequest.VendorId,
+                        IsActive = true,
+                        CreatedBy=fromGimpRequest.VendorId,
+                        CreatedAt=DateTime.UtcNow,
+                    };
+                    nspirationDbContext.ProjectExistingToNew.Add(projectExistingToNew);
+                    await nspirationDbContext.SaveChangesAsync();
+
+                    Project project = new Project
+                    {
+                        ExistingToNewId = projectExistingToNew.Id,
+                        Base64_String = fromGimpRequest.Base64_String,
+                        SVG_String = fromGimpRequest.SVG_String,
+                        CreatedBy= fromGimpRequest.VendorId,
+                        CreatedAt=DateTime.UtcNow,
+                    };
+                    nspirationDbContext.Project.Add(project);
+                    await nspirationDbContext.SaveChangesAsync();
+
+                    List<int> imageTypeIds = nspirationDbContext.ImageType.Select(x => x.Id).ToList();
+                    foreach (var typeId in imageTypeIds)
+                    {
+                        ImageInstance imageInstance = new ImageInstance
+                        {
+                            ProjectId = project.Id,
+                            TypeId = typeId,
+                            SVG_String = fromGimpRequest.SVG_String,
+                            CreatedBy = fromGimpRequest.VendorId,
+                            CreatedAt = DateTime.UtcNow,
+                        };
+                        nspirationDbContext.ImageInstance.Add(imageInstance);
+                    }
+                    await nspirationDbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    response.Message = "Project Details added Sucessfully";
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    response.Message = "Failed to Create";
+                    return response;
+                }
             }
         }
     }

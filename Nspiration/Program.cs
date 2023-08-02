@@ -42,8 +42,6 @@ builder.Services.AddLogging(builder => builder.AddFluentMigratorConsole())
                 .WithGlobalConnectionString("NspirationDB")
                 .ScanIn(typeof(AddColorTable_20230704483398).Assembly).For.Migrations().For.EmbeddedResources());
 builder.Services.AddDbContext<NspirationPortalOldDBContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("NspirationPortalOldDB")));
-//builder.Services.ConfigureRunner(builder => builder.AddSqlServer()
-//                .WithGlobalConnectionString("NspirationPortalOldDB"));
 
 //jwt token:
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

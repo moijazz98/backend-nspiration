@@ -14,15 +14,13 @@ namespace Nspiration.Migrations
         {
             Create.Table("Color")
                 .WithColumn("Id").AsInt32().NotNullable().PrimaryKey().Identity()
-                .WithColumn("FamilyId").AsInt32().NotNullable()
+                .WithColumn("FamilyId").AsInt32().NotNullable().ForeignKey("ColorFamily","Id")
                 .WithColumn("ShadeName").AsString().NotNullable()
                 .WithColumn("ShadeCode").AsString().NotNullable()
-                .WithColumn("FamilyId").AsInt32().NotNullable()
                 .WithColumn("R").AsInt32().NotNullable()
                 .WithColumn("G").AsInt32().NotNullable()
                 .WithColumn("B").AsInt32().NotNullable()
                 .WithColumn("HexCode").AsString().NotNullable();
-
         }
     }
 }
