@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Nspiration.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,14 +25,7 @@ builder.Services.AddCors(options =>
 
 // Adding Repository 
 
-builder.Services.AddTransient<IColorBl, ColorBl>();
-builder.Services.AddTransient<IColorBr, ColorBr>();
-builder.Services.AddTransient<IFolderBl, FolderBl>();
-builder.Services.AddTransient<IFolderBr, FolderBr>();
-builder.Services.AddTransient<IProjectBl, ProjectBl>();
-builder.Services.AddTransient<IProjectBr, ProjectBr>();
-builder.Services.AddTransient<IUserBl, UserBl>();
-builder.Services.AddTransient<IUserBr, UserBr>();
+builder.Services.AddApplicationServices();
 
 // Add services to the container.
 
