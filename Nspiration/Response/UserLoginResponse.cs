@@ -2,7 +2,7 @@
 {
     public class UserLoginResponse
     {
-        public int? UserId { get; set; }
+        public string GeneratedToken { get; set; }
         public string? SuccessorErrorMessage { get; set; }
     }
 }
