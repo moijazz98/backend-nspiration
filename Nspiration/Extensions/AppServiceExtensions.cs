@@ -7,17 +7,17 @@ namespace Nspiration.Extensions
 {
     public static class AppServiceExtensions
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection Services)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
-            Services.AddTransient<IColorBl, ColorBl>();
-            Services.AddTransient<IColorBr, ColorBr>();
-            Services.AddTransient<IFolderBl, FolderBl>();
-            Services.AddTransient<IFolderBr, FolderBr>();
-            Services.AddTransient<IProjectBl, ProjectBl>();
-            Services.AddTransient<IProjectBr, ProjectBr>();
-            Services.AddTransient<IUserBl, UserBl>();
-            Services.AddTransient<IUserBr, UserBr>();
-            return Services;
+            services.AddTransient<IColorBl, ColorBl>();
+            services.AddTransient<IColorBr, ColorBr>();
+            services.AddTransient<IFolderBl, FolderBl>();
+            services.AddTransient<IFolderBr, FolderBr>();
+            services.AddTransient<IProjectBl, ProjectBl>();
+            services.AddTransient<IProjectBr, ProjectBr>();
+            services.AddTransient<IUserBl, UserBl>();
+            services.AddTransient<IUserBr, UserBr>();
+            return services;
         }
     }
 }

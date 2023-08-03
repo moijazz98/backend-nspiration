@@ -16,6 +16,8 @@ namespace Nspiration.NspirationDBContext
         public DbSet<ProjectExistingToNew> ProjectExistingToNew { get; set; }
         public DbSet<Project> Project { get; set; }
         public DbSet<ImageInstance> ImageInstance { get; set; }
+        
         public DbSet<ImageType> ImageType { get; set; }
+        public DbSet<Section> Section { get; set; }
     }
 }

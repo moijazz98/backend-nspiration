@@ -1,5 +1,6 @@
 ﻿using Nspiration.BusinessLogic.IBusinessLogic;
 using Nspiration.BusinessRepository.IBusinessRepository;
+using Nspiration.Model;
 using Nspiration.Request;
 using Nspiration.Response;
 
@@ -27,6 +28,11 @@ namespace Nspiration.BusinessLogic
         public async Task<SucessOrErrorResponse> AddProjectDetailsFromGimp(FromGimpRequestModel fromGimpRequest)
         {
             return await projectBr.AddProjectDetailsFromGimp(fromGimpRequest);
+        }
+
+        public async Task<List<SectionResponse>> GetprojectSection(ProjectListRequest pRequest)
+        {
+            return await projectBr.GetprojectSection(pRequest);
         }
     }
 }
