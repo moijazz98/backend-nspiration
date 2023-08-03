@@ -48,7 +48,7 @@ namespace Nspiration.Controllers
             return NoContent();
         }
 
-        [HttpPost("GetSections")]
+        [HttpPost("GetprojectSection")]
         public async Task<IActionResult> GetprojectSection([FromBody] ProjectListRequest pRequest)
         {
             var response = await projectBl.GetprojectSection(pRequest);
