@@ -1,6 +1,6 @@
 ﻿namespace Nspiration.Request
 {
-    public class ProjectRequestModel
+    public class ProjectRequest
     {
         public int ProjectRequestId { get; set; }
         public string Image { get; set; }

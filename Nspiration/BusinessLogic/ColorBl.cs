@@ -12,12 +12,12 @@ namespace Nspiration.BusinessLogic
             colorBr = _colorBr;
         }
 
-        public async Task<List<ColorResponseModel>> GetAllColors()
+        public async Task<List<ColorResponse>> GetAllColors()
         {
             return await colorBr.GetAllColors();
         }
 
-        public async Task<List<ColorResponseModel>> GetColorsByFamily(int familyId)
+        public async Task<List<ColorResponse>> GetColorsByFamily(int familyId)
         {
             return await colorBr.GetColorsByFamily(familyId);
         }

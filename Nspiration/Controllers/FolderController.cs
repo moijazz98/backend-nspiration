@@ -15,7 +15,7 @@ namespace Nspiration.Controllers
             folderBl = _folderBl;
         }
         [HttpPost("addfolder")]
-        public async Task<IActionResult> AddFolder([FromBody] FolderRequestModel folderRequestModel)
+        public async Task<IActionResult> AddFolder([FromBody] FolderRequest folderRequestModel)
         {
             var response = await folderBl.AddFolder(folderRequestModel);
             if (response != null)
@@ -35,7 +35,7 @@ namespace Nspiration.Controllers
             return NoContent();
         }
         [HttpPut("deletefolder")]
-        public async Task<IActionResult> DeleteFolder([FromBody] DeleteFolderRequestModel deleteFolder)
+        public async Task<IActionResult> DeleteFolder([FromBody] DeleteFolderRequest deleteFolder)
         {
             var response=await folderBl.DeleteFolder(deleteFolder);
             if(response != null)
@@ -45,9 +45,29 @@ namespace Nspiration.Controllers
             return NoContent();
         }
         [HttpPut("renamefolder")]
-        public async Task<IActionResult> RenameFolder([FromBody] RenameFolderRequestModel renameFolder)
+        public async Task<IActionResult> RenameFolder([FromBody] RenameFolderRequest renameFolder)
         {
             var response = await folderBl.RenameFolder(renameFolder);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            return NoContent();
+        }
+        //[HttpGet("fetfolderwithsection")]
+        //public async Task<IActionResult> GetFolderWithSection(long projectId)
+        //{
+        //    var response = await folderBl.GetFolderWithSection(projectId);
+        //    if (response != null)
+        //    {
+        //        return Ok(response);
+        //    }
+        //    return NoContent();
+        //}
+        [HttpGet("getfolderwithsection")]
+        public async Task<IActionResult> GetFolderWithSection(long projectId)
+        {
+            var response = await folderBl.GetFolderWithSection(projectId);
             if (response != null)
             {
                 return Ok(response);

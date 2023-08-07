@@ -1,6 +1,6 @@
 ﻿namespace Nspiration.Response
 {
-    public class ColorResponseModel
+    public class ColorResponse
     {
         public int Id { get; set; }
         public string ShadeName { get; set; }

@@ -13,10 +13,10 @@ namespace Nspiration.BusinessRepository
             nspirationDBContext = _nspirationDBContext;
         }
 
-        public async Task<List<ColorResponseModel>> GetAllColors()
+        public async Task<List<ColorResponse>> GetAllColors()
         {
-            List<ColorResponseModel> colorResponseModel=await(from color in nspirationDBContext.Color
-                                                              select new ColorResponseModel
+            List<ColorResponse> colorResponseModel=await(from color in nspirationDBContext.Color
+                                                              select new ColorResponse
                                                               {
                                                                   Id = color.Id,
                                                                   ShadeName = color.ShadeName,
@@ -29,14 +29,14 @@ namespace Nspiration.BusinessRepository
             return colorResponseModel;
         }
 
-        public async Task<List<ColorResponseModel>> GetColorsByFamily(int familyId)
+        public async Task<List<ColorResponse>> GetColorsByFamily(int familyId)
         {
-            List<ColorResponseModel> colorResponseModel = new List<ColorResponseModel>();
+            List<ColorResponse> colorResponseModel = new List<ColorResponse>();
             if (familyId != 8)
             {
                 colorResponseModel = await (from color in nspirationDBContext.Color
                                                                      where color.FamilyId == familyId
-                                                                     select new ColorResponseModel
+                                                                     select new ColorResponse
                                                                      {
                                                                          Id = color.Id,
                                                                          ShadeName = color.ShadeName,

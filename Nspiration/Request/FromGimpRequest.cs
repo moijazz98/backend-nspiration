@@ -1,6 +1,6 @@
 ﻿namespace Nspiration.Request
 {
-    public class FromGimpRequestModel
+    public class FromGimpRequest
     {
         public int ProjectRequestId { get; set; }
         public int VendorId { get; set; }

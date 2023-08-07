@@ -38,7 +38,7 @@ namespace Nspiration.Controllers
             }                         
         }
         [HttpPost("addprojectdetails")]
-        public async Task<IActionResult> AddFolder([FromBody] FromGimpRequestModel fromGimpRequest)
+        public async Task<IActionResult> AddFolder([FromBody] FromGimpRequest fromGimpRequest)
         {
             var response = await projectBl.AddProjectDetailsFromGimp(fromGimpRequest);
             if (response != null)

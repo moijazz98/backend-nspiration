@@ -16,7 +16,7 @@ namespace Nspiration.BusinessRepository
             nspirationDBContext = _nspirationDBContext;
         }
         
-        public async Task<SucessOrErrorResponse> AddFolder(FolderRequestModel folderRequest)
+        public async Task<SucessOrErrorResponse> AddFolder(FolderRequest folderRequest)
         {
             using (IDbContextTransaction transaction = nspirationDBContext.Database.BeginTransaction())
             {
@@ -55,11 +55,11 @@ namespace Nspiration.BusinessRepository
             }
         }
 
-        public async Task<List<FolderResponseModel>> GetAllFolder(long projectId)
+        public async Task<List<FolderResponse>> GetAllFolder(long projectId)
         {
-            List<FolderResponseModel> folderResponseModel = await (from folder in nspirationDBContext.Folder
+            List<FolderResponse> folderResponseModel = await (from folder in nspirationDBContext.Folder
                                                                    where folder.ProjectId == projectId && folder.IsActive == true
-                                                                   select new FolderResponseModel
+                                                                   select new FolderResponse
                                                                    {
                                                                        Id = folder.Id,
                                                                        ProjectId = projectId,
@@ -67,7 +67,7 @@ namespace Nspiration.BusinessRepository
                                                                    }).OrderBy(x => x.Name).ToListAsync();
             return folderResponseModel;
         }
-        public async Task<SucessOrErrorResponse> DeleteFolder(DeleteFolderRequestModel deleteFolder)
+        public async Task<SucessOrErrorResponse> DeleteFolder(DeleteFolderRequest deleteFolder)
         {
             using (IDbContextTransaction transaction = nspirationDBContext.Database.BeginTransaction())
             {
@@ -101,7 +101,7 @@ namespace Nspiration.BusinessRepository
             }
         }
 
-        public async Task<SucessOrErrorResponse> RenameFolder(RenameFolderRequestModel renameFolder)
+        public async Task<SucessOrErrorResponse> RenameFolder(RenameFolderRequest renameFolder)
         {
             using (IDbContextTransaction transaction = nspirationDBContext.Database.BeginTransaction())
             {
@@ -136,6 +136,81 @@ namespace Nspiration.BusinessRepository
                     return response;
                 }
             }
+        }
+
+        //public async Task<List<FolderResponseModel>> GetFolderWithSection(long projectId)
+        //{
+        //    List<SectionResponseList> response = await(from section in nspirationDBContext.Section
+        //                                               join color in nspirationDBContext.Color
+        //                                               on section.ColorId equals color.Id into gj
+        //                                               from subjoin in gj.DefaultIfEmpty()
+        //                                               where section.ProjectId== projectId
+        //                                               select new  SectionResponseList
+        //                                               {
+        //                                                   SectionId=section.Id,
+        //                                                   PathName=section.PathName,
+        //                                                   FolderId=section.FolderId,
+        //                                                   ShadeCode=subjoin.ShadeCode,
+        //                                                   ShadeName=subjoin.ShadeName,
+        //                                               }).OrderBy(x=>x.PathName).ToListAsync();
+        //    List<FolderResponseModel> result =  (from sec in response
+        //                                              join folder in nspirationDBContext.Folder
+        //                                              on sec.FolderId equals folder.Id into gj
+        //                                              from foldergroup in gj.DefaultIfEmpty()
+        //                                              group sec by foldergroup into foldergroup
+        //                                              select new FolderResponseModel
+        //                                              {
+        //                                                  Id=foldergroup.Key?.Id,
+        //                                                  ProjectId=foldergroup.Key?.ProjectId,
+        //                                                  Name=foldergroup.Key?.Name,
+        //                                                  SectionResponseList=foldergroup.ToList(),
+        //                                              }).OrderByDescending(x=>x.Name).ToList();
+        //    return result;
+        //}
+
+        public async Task<FolderResponseWithSection> GetFolderWithSection(long projectId)
+        {
+            List<FolderResponse> folderResponseModel=await(from folder in nspirationDBContext.Folder
+                                                                 where folder.ProjectId == projectId
+                                                                 select new FolderResponse
+                                                                 {
+                                                                     Id = folder.Id,
+                                                                     ProjectId=folder.ProjectId,
+                                                                     Name=folder.Name,
+                                                                     SectionResponseList=(from section in nspirationDBContext.Section
+                                                                                          join color in nspirationDBContext.Color
+                                                                                          on section.ColorId equals color.Id into gj
+                                                                                          from subjoin in gj.DefaultIfEmpty()
+                                                                                          where section.FolderId==folder.Id
+                                                                                          select new SectionResponseList
+                                                                                          {
+                                                                                              SectionId=section.Id,
+                                                                                              PathName=section.PathName,
+                                                                                              FolderId=section.FolderId,
+                                                                                              ShadeCode=subjoin.ShadeCode,
+                                                                                              ShadeName=subjoin.ShadeName,
+                                                                                          }).ToList()
+                                                                 }).ToListAsync();
+            List<SectionResponseList>? sectionResponseList = await (from section in nspirationDBContext.Section
+                                                                     join color in nspirationDBContext.Color
+                                                                     on section.ColorId equals color.Id into gj
+                                                                     from subjoin in gj.DefaultIfEmpty()
+                                                                     where section.ProjectId == projectId && section.FolderId == null
+                                                                     select new SectionResponseList
+                                                                     {
+                                                                         SectionId = section.Id,
+                                                                         PathName = section.PathName,
+                                                                         FolderId = section.FolderId,
+                                                                         ShadeCode = subjoin.ShadeCode,
+                                                                         ShadeName = subjoin.ShadeName,
+                                                                     }).ToListAsync();
+            FolderResponseWithSection twoResponse = new FolderResponseWithSection()
+            {
+                FolderResponse = folderResponseModel,
+                SectionResponse = sectionResponseList,
+            };
+            return twoResponse;
+
         }
     }
 }

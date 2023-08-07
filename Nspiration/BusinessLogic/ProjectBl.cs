@@ -16,7 +16,7 @@ namespace Nspiration.BusinessLogic
 
        
 
-        public async Task<ProjectInfoResponseModel?> GetProjectInfo(int requstId)
+        public async Task<ProjectInfoResponse?> GetProjectInfo(int requstId)
         {
             return await projectBr.GetProjectInfo(requstId);
         }
@@ -25,7 +25,7 @@ namespace Nspiration.BusinessLogic
         {
             return await projectBr.GetVendorProjectList(projRequest);             
         }
-        public async Task<SucessOrErrorResponse> AddProjectDetailsFromGimp(FromGimpRequestModel fromGimpRequest)
+        public async Task<SucessOrErrorResponse> AddProjectDetailsFromGimp(FromGimpRequest fromGimpRequest)
         {
             return await projectBr.AddProjectDetailsFromGimp(fromGimpRequest);
         }

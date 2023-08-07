@@ -1,6 +1,6 @@
 ﻿namespace Nspiration.Response
 {
-    public class ProjectInfoResponseModel
+    public class ProjectInfoResponse
     {
         public int Id { get; set; }
         public string ProjectName { get; set; }

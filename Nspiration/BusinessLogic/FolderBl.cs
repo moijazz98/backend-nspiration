@@ -13,23 +13,33 @@ namespace Nspiration.BusinessLogic
             folderBr=_folderBr;
         }
 
-        public async Task<SucessOrErrorResponse> AddFolder(FolderRequestModel folderRequest)
+        public async Task<SucessOrErrorResponse> AddFolder(FolderRequest folderRequest)
         {
             return await folderBr.AddFolder(folderRequest);
         }
 
-        public async Task<List<FolderResponseModel>> GetAllFolder(long projectId)
+        public async Task<List<FolderResponse>> GetAllFolder(long projectId)
         {
             return await folderBr.GetAllFolder(projectId);
         }
-        public async Task<SucessOrErrorResponse> DeleteFolder(DeleteFolderRequestModel deleteFolder)
+        public async Task<SucessOrErrorResponse> DeleteFolder(DeleteFolderRequest deleteFolder)
         {
             return await folderBr.DeleteFolder(deleteFolder);
         }
 
-        public async Task<SucessOrErrorResponse> RenameFolder(RenameFolderRequestModel renameFolder)
+        public async Task<SucessOrErrorResponse> RenameFolder(RenameFolderRequest renameFolder)
         {
             return await folderBr.RenameFolder(renameFolder);
+        }
+
+        //public async Task<List<FolderResponseModel>> GetFolderWithSection(long projectId)
+        //{
+        //    return await folderBr.GetFolderWithSection(projectId);
+        //}
+
+        public async Task<FolderResponseWithSection> GetFolderWithSection(long projectId)
+        {
+            return await folderBr.GetFolderWithSection(projectId);
         }
     }
 }
