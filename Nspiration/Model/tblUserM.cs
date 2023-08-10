@@ -6,6 +6,8 @@ namespace Nspiration.Model
     {
         [Key]
         public int iUserId { get; set; }
+        public string sFirstName { get; set; }
+        public string sLastName { get; set; }
         public string sPhone { get; set; }
         public string sUserEmailId { get; set; }
         public string sUserType { get; set; }

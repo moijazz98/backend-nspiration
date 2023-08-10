@@ -14,9 +14,9 @@ namespace Nspiration.Controllers
             projectBl = _projectBl;
         }
         [HttpGet("getprojectinfo")]
-        public async Task<IActionResult> GetProjectInfo(int requestId)
+        public async Task<IActionResult> GetProjectInfo(int projectRequestId)
         {
-            var response = await projectBl.GetProjectInfo(requestId);
+            var response = await projectBl.GetProjectInfo(projectRequestId);
             if (response != null)
             {
                 return Ok(response);
@@ -58,5 +58,28 @@ namespace Nspiration.Controllers
             }
             return NoContent();
         }
+
+        [HttpPost("GetprojectRep")]
+        public async Task<IActionResult> GetprojectRep(long projectId, int typeId)
+        {
+            var response = await projectBl.GetprojectRep(projectId, typeId);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            return NoContent();
+        }
+
+        [HttpPost("GetPdfData")]
+        public async Task<IActionResult> GetPdfData(long projectId, int typeId)
+        {
+            var response = await projectBl.GetPdfData(projectId, typeId);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            return NoContent();
+        }
+
     }
 }

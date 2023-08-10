@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Nspiration.BusinessLogic;
 using Nspiration.BusinessRepository.IBusinessRepository;
 using Nspiration.Model;
 using Nspiration.NspirationDBContext;
@@ -13,13 +14,12 @@ namespace Nspiration.BusinessRepository
     {
         public readonly NspirationPortalOldDBContext nspirationPortalOldDBContext;
         public readonly NspirationDbContext nspirationDbContext;
-        public ProjectBr(NspirationPortalOldDBContext _nspirationPortalOldDBContext, NspirationDbContext _nspirationDbContext)
+         
+        public ProjectBr(NspirationPortalOldDBContext _nspirationPortalOldDBContext, NspirationDbContext _nspirationDbContext )
         {
             nspirationPortalOldDBContext = _nspirationPortalOldDBContext;
-            nspirationDbContext = _nspirationDbContext;
+            nspirationDbContext = _nspirationDbContext;            
         }
-
-
 
         public async Task<ProjectInfoResponse?> GetProjectInfo(int requestId)
         {
@@ -46,7 +46,7 @@ namespace Nspiration.BusinessRepository
             {
                 string startupPath = System.IO.Directory.GetCurrentDirectory();
 
-                List<ProjectListResponse> projectList = await (from p in nspirationPortalOldDBContext.tblProjectTx
+                List<ProjectListResponse> oldDbProjectList = await (from p in nspirationPortalOldDBContext.tblProjectTx
                                                                join d in nspirationPortalOldDBContext.tblDepotM
                                                                on p.DepotId equals d.DepotId
                                                                where d.OperationalTeamId == projRequest.VendorId &&
@@ -54,12 +54,25 @@ namespace Nspiration.BusinessRepository
                                                                orderby p.dtCreationDate descending
                                                                select new ProjectListResponse
                                                                {
-                                                                   iProjectId = p.iProjectId,
+                                                                   oldProjectId = p.iProjectId,
                                                                    sProjectName = p.sProjectName,
-                                                                   sSiteImage = (p.sSiteImage == null ? "Image not found" : startupPath + @"\\ProjectImages\\Site-sampleImg.jpg"),
-                                                                   dtActionDate = p.dtActionDate
+                                                                   sSiteImage = p.sSiteImage,
+                                                                   dtActionDate = p.dtActionDate,
+                                                                   ProjectId=0
 
                                                                }).Take(10).ToListAsync();
+
+                List<ProjectListResponse> projectList = (from pro in oldDbProjectList
+                                                         join pn in nspirationDbContext.ProjectExistingToNew on pro.oldProjectId equals pn.ProjectRequestId
+                                                             join prj in nspirationDbContext.Project on pn.Id equals prj.ExistingToNewId
+                                                             select new ProjectListResponse
+                                                             {
+                                                                 oldProjectId = pro.oldProjectId,
+                                                                 sProjectName = pro.sProjectName,
+                                                                 sSiteImage = (pro.sSiteImage == null ? "Image not found" : startupPath + @"\\ProjectImages\\Site-sampleImg.jpg"),
+                                                                 dtActionDate = pro.dtActionDate,
+                                                                 ProjectId = prj.Id
+                                                             }).ToList();                                                            
                 return projectList;
             }
             catch (Exception ex)
@@ -122,15 +135,15 @@ namespace Nspiration.BusinessRepository
             List<Section> sections = new List<Section>();
             foreach (string s in svgStr)
             {
-                string getpathName = GetBetween(s, "<path id=", "fill=");
-                string pathstring = getpathName.Replace("id =", "").Replace("\"", "");
+                string getPathName = GetBetween(s, "<path id=", "fill=");
+                string patString = getPathName.Replace("id =", "").Replace("\"", "");
 
-                if (pathstring.Length > 0)
+                if (patString.Length > 0)
                 {
                     Section sectionList = new Section
                     {
                         //ProjectId = projectId,
-                        PathName = pathstring.Trim(),
+                        PathName = patString.Trim(),
                         IsActive = true,
                         CreatedBy = vendorId,
                         CreatedAt = DateTime.UtcNow,
@@ -143,7 +156,7 @@ namespace Nspiration.BusinessRepository
             return sections;
         }
 
-        public static string GetBetween(string strSource, string strStart, string strEnd)
+        private static string GetBetween(string strSource, string strStart, string strEnd)
         {
             if (strSource.Contains(strStart) && strSource.Contains(strEnd))
             {
@@ -167,6 +180,69 @@ namespace Nspiration.BusinessRepository
                                                       IsActive = s.IsActive,
                                                   }).ToListAsync();
             return result;
+        }
+
+        public async Task<List<ProjectRepResponse>> GetprojectRep(long projectId, int typeId)
+        {
+            List<ProjectRepResponse> ProjectRep = await(from p in nspirationDbContext.Project
+                                                        join i in nspirationDbContext.ImageInstance on p.Id equals i.ProjectId
+                                                        where p.Id == projectId && i.TypeId == typeId
+                                                        select new ProjectRepResponse
+                                                        {
+                                                            //Id = p.Id,
+                                                            ExistingToNewId = p.ExistingToNewId,
+                                                            Base64_String = p.Base64_String,
+                                                            SVG_String = p.SVG_String,
+                                                        }).ToListAsync();
+            return ProjectRep;
+        }
+
+        public async Task<PdfDataResponse> GetPdfData(long projectId, int typeId)
+        {
+            try
+            {
+                var tblProjectTx = nspirationDbContext.ProjectExistingToNew.Where(x => x.Id == projectId).FirstOrDefault();
+
+                List<PdfHeaderResponse> hResp = await (from pro in nspirationPortalOldDBContext.tblProjectTx
+                                                       join user in nspirationPortalOldDBContext.tblUserM on pro.iCreatedBy equals user.iUserId
+                                                       where pro.iProjectId == tblProjectTx.ProjectRequestId
+                                                       select new PdfHeaderResponse
+                                                       {
+                                                           ClientName = pro.sProjectName,
+                                                           ClientAddress = pro.sBuildingName,
+                                                           SalesOfficer = user.sFirstName == user.sLastName ? ("Mr." + user.sFirstName) : ("Mr." + user.sFirstName + " " + user.sLastName)
+
+                                                       }).ToListAsync();
+
+                List<PdfBodyResponse> bResp = (from p in nspirationDbContext.Project
+                                               where p.Id == projectId
+                                               select new PdfBodyResponse
+                                               {
+                                                   SVG_String = p.SVG_String,
+                                                   Base64_image = p.Base64_String,
+                                                   projectData = (from s in nspirationDbContext.Section
+                                                                  join sc in nspirationDbContext.SectionColor on s.Id equals sc.Id
+                                                                  join c in nspirationDbContext.Color on s.Id equals c.Id
+                                                                  where s.ProjectId == projectId && sc.TypeId == typeId
+                                                                  select new PdfProjectReponse
+                                                                  {
+                                                                      AreaName = s.PathName,
+                                                                      ColorCode = c.ShadeCode,
+                                                                      ColorName = c.ShadeName,
+                                                                      ShadeCard = c.HexCode
+                                                                  }).ToList()
+                                               }).ToList();
+                PdfDataResponse results = new PdfDataResponse()
+                {
+                    hResponse = hResp,
+                    bResponse = bResp,
+                };
+                return results;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
         }
     }
 }

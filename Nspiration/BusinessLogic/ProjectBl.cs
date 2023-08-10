@@ -1,4 +1,5 @@
 ﻿using Nspiration.BusinessLogic.IBusinessLogic;
+using Nspiration.BusinessRepository;
 using Nspiration.BusinessRepository.IBusinessRepository;
 using Nspiration.Model;
 using Nspiration.Request;
@@ -33,6 +34,16 @@ namespace Nspiration.BusinessLogic
         public async Task<List<SectionResponse>> GetprojectSection(ProjectListRequest pRequest)
         {
             return await projectBr.GetprojectSection(pRequest);
+        }
+
+        public async Task<List<ProjectRepResponse>> GetprojectRep(long projectId, int typeId)
+        {
+            return await projectBr.GetprojectRep(projectId, typeId);
+        }
+
+        public async Task<PdfDataResponse> GetPdfData(long projectId, int typeId)
+        {
+            return await projectBr.GetPdfData(projectId, typeId);
         }
     }
 }
