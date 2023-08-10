@@ -65,14 +65,25 @@ namespace Nspiration.Controllers
         //    return NoContent();
         //}
         [HttpGet("getfolderwithsection")]
-        public async Task<IActionResult> GetFolderWithSection(long projectId)
+        public async Task<IActionResult> GetFolderWithSection(long projectId,int typeId)
         {
-            var response = await folderBl.GetFolderWithSection(projectId);
+            var response = await folderBl.GetFolderWithSection(projectId, typeId);
             if (response != null)
             {
                 return Ok(response);
             }
             return NoContent();
         }
+        [HttpPut("updatesectioncolor")]
+        public async Task<IActionResult> UpdateSectionColor([FromBody] SectionColorRequest sectionColor)
+        {
+            var response = await folderBl.UpdateSectionColor(sectionColor);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            return NoContent();
+        }
+
     }
 }

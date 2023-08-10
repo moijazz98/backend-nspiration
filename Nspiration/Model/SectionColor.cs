@@ -1,20 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Nspiration.Model
+﻿namespace Nspiration.Model
 {
-    public class Section
+    public class SectionColor
     {
         public long Id { get; set; }
-        public long? FolderId { get; set; }
-        public string? PathName { get; set; }
+        public long SectionId { get; set; }
+        public long TypeId { get; set; }
         public int? ColorId { get; set; }
         public bool IsActive { get; set; }
         public int CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedAt { get; set; }
-        public long ProjectId { get; set; }
-        [ForeignKey("ProjectId")]
-        public Project? Project { get; set; }
     }
 }

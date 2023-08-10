@@ -37,9 +37,14 @@ namespace Nspiration.BusinessLogic
         //    return await folderBr.GetFolderWithSection(projectId);
         //}
 
-        public async Task<FolderResponseWithSection> GetFolderWithSection(long projectId)
+        public async Task<FolderResponseWithSection> GetFolderWithSection(long projectId,int typeId)
         {
-            return await folderBr.GetFolderWithSection(projectId);
+            return await folderBr.GetFolderWithSection(projectId,typeId);
+        }
+
+        public async Task<SucessOrErrorResponse> UpdateSectionColor(SectionColorRequest sectionColor)
+        {
+            return await folderBr.UpdateSectionColor(sectionColor);
         }
     }
 }

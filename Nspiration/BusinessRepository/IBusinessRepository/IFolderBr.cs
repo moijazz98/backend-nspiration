@@ -10,8 +10,8 @@ namespace Nspiration.BusinessRepository.IBusinessRepository
         public Task<SucessOrErrorResponse> DeleteFolder(DeleteFolderRequest deleteFolder);
         public Task<SucessOrErrorResponse> RenameFolder(RenameFolderRequest renameFolder);
         //public Task<List<FolderResponseModel>> GetFolderWithSection(long projectId);
-        public Task<FolderResponseWithSection> GetFolderWithSection(long projectId);
-
+        public Task<FolderResponseWithSection> GetFolderWithSection(long projectId,int typeId);
+        public Task<SucessOrErrorResponse> UpdateSectionColor(SectionColorRequest sectionColor);
 
     }
 }

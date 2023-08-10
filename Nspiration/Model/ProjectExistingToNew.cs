@@ -12,5 +12,6 @@ namespace Nspiration.Model
         public DateTime CreatedAt { get; set; }
         public int? ModifiedBy { get; set; }
         public DateTime? ModifiedAt { get; set;}
+        public Project Project { get; set; }
     }
 }

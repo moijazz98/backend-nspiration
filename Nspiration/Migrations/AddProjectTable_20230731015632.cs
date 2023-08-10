@@ -16,7 +16,6 @@ namespace Nspiration.Migrations
                 .WithColumn("Id").AsInt64().NotNullable().PrimaryKey().Identity()
                 .WithColumn("ExistingToNewId").AsInt64().NotNullable()
                 .WithColumn("Base64_String").AsString().NotNullable()
-                .WithColumn("SVG_String").AsString().NotNullable()
                 .WithColumn("CreatedBy").AsInt32().NotNullable()
                 .WithColumn("CreatedAt").AsDateTimeOffset().NotNullable()
                 .WithColumn("ModifiedBy").AsInt32().Nullable()
