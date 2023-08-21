@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Nspiration.BusinessLogic.IBusinessLogic;
 using Nspiration.Request;
+using System;
 
 namespace Nspiration.Controllers
 {
@@ -27,7 +28,7 @@ namespace Nspiration.Controllers
         [HttpPost("GetProjectList")]
         public async Task<IActionResult> VendorProjectList([FromBody] ProjectListRequest projRequest)
         {
-            if (projRequest.VendorId != null && projRequest.VendorId !=0)
+            if (projRequest.VendorId != null && projRequest.VendorId != 0)
             {
                 var getuserList = await projectBl.GetVendorProjectList(projRequest);
                 return Ok(getuserList);
@@ -35,10 +36,10 @@ namespace Nspiration.Controllers
             else
             {
                 return NotFound("Invaid VendorId!!!!");
-            }                         
+            }
         }
         [HttpPost("addprojectdetails")]
-        public async Task<IActionResult> AddFolder([FromBody] FromGimpRequest fromGimpRequest)
+        public async Task<IActionResult> AddProjectDetails([FromBody] FromGimpRequest fromGimpRequest)
         {
             var response = await projectBl.AddProjectDetailsFromGimp(fromGimpRequest);
             if (response != null)
@@ -80,6 +81,15 @@ namespace Nspiration.Controllers
             }
             return NoContent();
         }
-
+        [HttpPost("CallPythonFlaskApi")]
+        public async Task<IActionResult> CallPythonFlaskApi([FromBody] PythonFlaskApiRequest pythonFlaskApiRequest)
+        {
+            var response = await projectBl.CallPythonFlaskApi(pythonFlaskApiRequest);
+            if (response != null)
+            {
+                return Ok(response);
+            }
+            return NoContent();
+        }
     }
 }

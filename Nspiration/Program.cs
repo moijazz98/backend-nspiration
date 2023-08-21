@@ -27,7 +27,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddApplicationServices();
 
-// Add services to the container.
+// Add services to the container 
 
 builder.Services.AddDbContext<NspirationDbContext>(opt => opt.UseNpgsql(builder.Configuration.GetConnectionString("NspirationDB")));
 builder.Services.AddLogging(builder => builder.AddFluentMigratorConsole())
@@ -85,6 +85,7 @@ builder.Services.AddSwaggerGen(c =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

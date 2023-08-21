@@ -49,7 +49,7 @@ namespace Nspiration.BusinessRepository
                 catch (Exception ex)
                 {
                     transaction.Rollback();
-                    response.Message = "Failed to Create";
+                    response.Message = ex.Message;
                     return response;
                 }
             }

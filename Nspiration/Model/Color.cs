@@ -10,6 +10,7 @@
         public int G { get; set; }
         public int B { get; set; }
         public string HexCode { get; set; }
+        public ICollection<SectionColor>? SectionColor { get; set; }
 
     }
 }

@@ -6,6 +6,5 @@
         public string ColorCode { get; set; }
         public string ColorName { get; set; }
         public string ShadeCard { get; set; }
-
     }
 }

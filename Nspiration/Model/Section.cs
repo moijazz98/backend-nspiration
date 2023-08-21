@@ -16,5 +16,6 @@ namespace Nspiration.Model
         public long ProjectId { get; set; }
         [ForeignKey("ProjectId")]
         public Project? Project { get; set; }
+        public ICollection<SectionColor> SectionColor { get; set; }
     }
 }
