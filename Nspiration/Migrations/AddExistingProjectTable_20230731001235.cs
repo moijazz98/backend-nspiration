@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Nspiration.Migrations
 {
-    [Migration(20230731001235)]
+   // [Migration(20230731001235)]
     public class AddExistingProjectTable_20230731001235 : Migration
     {
         public override void Down()

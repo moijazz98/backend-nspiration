@@ -2,7 +2,7 @@
 
 namespace Nspiration.Migrations
 {
-    [Migration(20230710349483)]
+    //[Migration(20230710349483)]
     public class AddFolderTable_20230710349483 : Migration
     {
         public override void Down()
