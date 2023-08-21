@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Nspiration.Migrations
 {
     [Migration(20230731001235)]
-    public class AddProjectExistingToNewTable_20230731001235 : Migration
+    public class AddExistingProjectTable_20230731001235 : Migration
     {
         public override void Down()
         {
@@ -13,7 +13,7 @@ namespace Nspiration.Migrations
 
         public override void Up()
         {
-            Create.Table("ProjectExistingToNew")
+            Create.Table("ExistingProject")
                 .WithColumn("Id").AsInt64().NotNullable().PrimaryKey().Identity()
                 .WithColumn("ProjectRequestId").AsInt32().NotNullable()
                 .WithColumn("VendorId").AsInt32().NotNullable()

@@ -2,7 +2,7 @@
 
 namespace Nspiration.Migrations
 {
-    //[Migration(202308031936141)]
+    [Migration(202308031936141)]
     public class AddSectionTable_20230803121: Migration
     {
         public override void Down()

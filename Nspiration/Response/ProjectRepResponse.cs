@@ -2,7 +2,7 @@
 {
     public class ProjectRepResponse
     {
-        public long ExistingToNewId { get; set; }
+        public long ExistingProjectId { get; set; }
         public string? Base64_String { get; set; }
         public string? SVG_String { get; set; }
     }

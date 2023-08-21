@@ -85,9 +85,9 @@ namespace Nspiration.BusinessRepository
                                                                }).Take(10).ToListAsync();
 
                 List<ProjectListResponse> projectList = (from pro in oldDbProjectList
-                                                         join pn in nspirationDbContext.ProjectExistingToNew on pro.oldProjectId equals pn.ProjectRequestId
-                                                             join prj in nspirationDbContext.Project on pn.Id equals prj.ExistingToNewId
-                                                             select new ProjectListResponse
+                                                         join pn in nspirationDbContext.ExistingProject on pro.oldProjectId equals pn.ProjectRequestId
+                                                             join prj in nspirationDbContext.Project on pn.Id equals prj.ExistingProjectId
+                                                         select new ProjectListResponse
                                                              {
                                                                  oldProjectId = pro.oldProjectId,
                                                                  sProjectName = pro.sProjectName,
@@ -110,7 +110,7 @@ namespace Nspiration.BusinessRepository
                 try
                 {
                     List<int> imageTypeIds = nspirationDbContext.ImageType.Select(x => x.Id).ToList();
-                    ProjectExistingToNew projectExistingToNew = new ProjectExistingToNew
+                    ExistingProject existingProject = new ExistingProject
                     {
                         ProjectRequestId = fromGimpRequest.ProjectRequestId,
                         VendorId = fromGimpRequest.VendorId,
@@ -129,7 +129,7 @@ namespace Nspiration.BusinessRepository
                     };
                     foreach (var typeid in imageTypeIds)
                     {
-                        projectExistingToNew.Project.ImageInstance.Add(new ImageInstance
+                        existingProject.Project.ImageInstance.Add(new ImageInstance
                         {
                             TypeId = typeid,
                             SVG_String = fromGimpRequest.SVG_String,
@@ -138,7 +138,7 @@ namespace Nspiration.BusinessRepository
                             CreatedBy = fromGimpRequest.VendorId,
                         });
                     }
-                    await nspirationDbContext.ProjectExistingToNew.AddAsync(projectExistingToNew);
+                    await nspirationDbContext.ExistingProject.AddAsync(existingProject);
                     await nspirationDbContext.SaveChangesAsync();
                     await transaction.CommitAsync();
                     response.Message = "Project Details added Sucessfully";
@@ -214,7 +214,7 @@ namespace Nspiration.BusinessRepository
                                                         select new ProjectRepResponse
                                                         {
                                                             //Id = p.Id,
-                                                            ExistingToNewId = p.ExistingToNewId,
+                                                            ExistingProjectId = p.ExistingProjectId,
                                                             Base64_String = p.Base64_String,
                                                             SVG_String = p.SVG_String,
                                                         }).ToListAsync();
@@ -225,7 +225,7 @@ namespace Nspiration.BusinessRepository
         {
             try
             {
-                var tblProjectTx = nspirationDbContext.ProjectExistingToNew.Where(x => x.Id == projectId).FirstOrDefault();
+                var tblProjectTx = nspirationDbContext.ExistingProject.Where(x => x.Id == projectId).FirstOrDefault();
 
                 List<PdfHeaderResponse> hResp = await (from pro in nspirationPortalOldDBContext.tblProjectTx
                                                        join user in nspirationPortalOldDBContext.tblUserM on pro.iCreatedBy equals user.iUserId

@@ -2,7 +2,7 @@
 
 namespace Nspiration.Model
 {
-    public class ProjectExistingToNew
+    public class ExistingProject
     {
         public long Id { get; set; } 
         public int ProjectRequestId { get; set; }
