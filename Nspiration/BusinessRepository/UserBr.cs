@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Nspiration.BusinessRepository.IBusinessRepository;
+using Nspiration.Helpers;
 using Nspiration.NspirationDBContext;
 using Nspiration.Request;
 using Nspiration.Response;
@@ -22,7 +23,11 @@ namespace Nspiration.BusinessRepository
         public async Task<UserLoginResponse> LoginValidation(UserLoginRequest userLoginRequest)
         {
             UserLoginResponse userLoginResponse = new UserLoginResponse();
-            var user = nspirationPortalOldDBContext.tblUserM.FirstOrDefault(x => x.sPhone == userLoginRequest.PhoneNumber && x.sUserType=="6" && x.cStatus=='A');
+
+            byte[] b = new byte[1];
+            string encryptPassword = SimpleHash.ComputeHash(userLoginRequest.Password, "SHA1", b);
+
+            var user = nspirationPortalOldDBContext.tblUserM.FirstOrDefault(x => x.sPhone == userLoginRequest.PhoneNumber && x.sPassword == encryptPassword && x.sUserType=="6" && x.cStatus=='A');
             if(user !=  null && user.sPassword==userLoginRequest.Password)
             {
                 var loginToken = GetJWTToken(userLoginRequest);
