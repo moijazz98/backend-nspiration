@@ -76,7 +76,7 @@ namespace Nspiration.BusinessRepository
                                                                orderby p.dtCreationDate descending
                                                                select new ProjectListResponse
                                                                {
-                                                                   oldProjectId = p.iProjectId,
+                                                                   ExistingProjectId = p.iProjectId,
                                                                    sProjectName = p.sProjectName,
                                                                    sSiteImage = p.sSiteImage,
                                                                    dtActionDate = p.dtActionDate,
@@ -85,13 +85,13 @@ namespace Nspiration.BusinessRepository
                                                                }).Take(10).ToListAsync();
 
                 List<ProjectListResponse> projectList = (from pro in oldDbProjectList
-                                                         join pn in nspirationDbContext.ExistingProject on pro.oldProjectId equals pn.ProjectRequestId
+                                                         join pn in nspirationDbContext.ExistingProject on pro.ExistingProjectId equals pn.ProjectRequestId
                                                              join prj in nspirationDbContext.Project on pn.Id equals prj.ExistingProjectId
                                                          select new ProjectListResponse
                                                              {
-                                                                 oldProjectId = pro.oldProjectId,
+                                                                 ExistingProjectId = pro.ExistingProjectId,
                                                                  sProjectName = pro.sProjectName,
-                                                                 sSiteImage = (pro.sSiteImage == null ? "Image not found" : startupPath + @"\\ProjectImages\\Site-sampleImg.jpg"),
+                                                                 sSiteImage = prj.Base64_String,
                                                                  dtActionDate = pro.dtActionDate,
                                                                  ProjectId = prj.Id
                                                              }).ToList();                                                            
@@ -225,7 +225,11 @@ namespace Nspiration.BusinessRepository
         {
             try
             {
-                var tblProjectTx = nspirationDbContext.ExistingProject.Where(x => x.Id == projectId).FirstOrDefault();
+                var tblProjectTx = nspirationDbContext.Project
+                .Where(project => project.Id == projectId)
+                .Select(existingProject => existingProject.ExistingProject)
+                .FirstOrDefault();
+                //var tblProjectTx = nspirationDbContext.ExistingProject.Where(x => x.Id == projectId).FirstOrDefault();
 
                 List<PdfHeaderResponse> hResp = await (from pro in nspirationPortalOldDBContext.tblProjectTx
                                                        join user in nspirationPortalOldDBContext.tblUserM on pro.iCreatedBy equals user.iUserId
@@ -255,7 +259,8 @@ namespace Nspiration.BusinessRepository
                                                                       AreaName = s.PathName,
                                                                       ColorCode = c.ShadeCode,
                                                                       ColorName = c.ShadeName,
-                                                                      ShadeCardName = sh.Name
+                                                                      HexCode = c.HexCode,
+                                                                      ShadeCard=sh.Name
                                                                   }).ToList()
                                                }).ToList();
                 PdfDataResponse results = new PdfDataResponse()
@@ -336,7 +341,7 @@ namespace Nspiration.BusinessRepository
                     HttpResponseMessage flaskApiResponse = await _httpClient.PostAsync(flaskApiUrl, content);
                     var _base64_String = await flaskApiResponse.Content.ReadAsStringAsync();
                     //response.Message = await flaskApiResponse.Content.ReadAsStringAsync();
-                    ImageInstance? imageInstance = await nspirationDbContext.ImageInstance.Where(x => x.ProjectId == 36 && x.TypeId == 1).FirstOrDefaultAsync();
+                    ImageInstance? imageInstance = await nspirationDbContext.ImageInstance.Where(x => x.ProjectId == pythonFlaskApiRequest.ProjectId && x.TypeId == pythonFlaskApiRequest.TypeId).FirstOrDefaultAsync();
                     {
                         imageInstance.Base64_String = _base64_String;
                         imageInstance.ModifiedAt = DateTime.UtcNow;

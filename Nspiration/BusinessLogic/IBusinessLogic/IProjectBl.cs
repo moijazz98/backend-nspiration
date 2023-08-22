@@ -12,5 +12,6 @@ namespace Nspiration.BusinessLogic.IBusinessLogic
         public Task<List<SectionResponse>> GetprojectSection(ProjectListRequest pRequest);
         public Task<List<ProjectRepResponse>> GetprojectRep(long projectId, int typeId);
         public Task<PdfDataResponse> GetPdfData(long projectId, int typeId);
+        public Task<PythonRequest> CallPythonFlaskApi(PythonFlaskApiRequest pythonFlaskApiRequest);
     }
 }

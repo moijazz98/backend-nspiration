@@ -45,5 +45,10 @@ namespace Nspiration.BusinessLogic
         {
             return await projectBr.GetPdfData(projectId, typeId);
         }
+
+        public async Task<PythonRequest> CallPythonFlaskApi(PythonFlaskApiRequest pythonFlaskApiRequest)
+        {
+            return await projectBr.CallPythonFlaskApi(pythonFlaskApiRequest);
+        }
     }
 }
