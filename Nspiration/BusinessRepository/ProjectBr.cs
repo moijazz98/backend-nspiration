@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Nspiration.BusinessLogic;
 using Nspiration.BusinessRepository.IBusinessRepository;
@@ -7,6 +8,9 @@ using Nspiration.NspirationDBContext;
 using Nspiration.Request;
 using Nspiration.Response;
 using System.ComponentModel;
+using System.Text;
+using Newtonsoft.Json;
+
 
 namespace Nspiration.BusinessRepository
 {
@@ -14,30 +18,48 @@ namespace Nspiration.BusinessRepository
     {
         public readonly NspirationPortalOldDBContext nspirationPortalOldDBContext;
         public readonly NspirationDbContext nspirationDbContext;
-         
-        public ProjectBr(NspirationPortalOldDBContext _nspirationPortalOldDBContext, NspirationDbContext _nspirationDbContext )
+        public readonly HttpClient _httpClient;
+
+
+        public ProjectBr(NspirationPortalOldDBContext _nspirationPortalOldDBContext, NspirationDbContext _nspirationDbContext,IHttpClientFactory httpClientFactory)
         {
             nspirationPortalOldDBContext = _nspirationPortalOldDBContext;
-            nspirationDbContext = _nspirationDbContext;            
+            nspirationDbContext = _nspirationDbContext;
+            _httpClient = httpClientFactory.CreateClient();
         }
 
         public async Task<ProjectInfoResponse?> GetProjectInfo(int requestId)
         {
-            ProjectInfoResponse? projectInfo = await (from project in nspirationPortalOldDBContext.tblProjectTx
-                                                           join user in nspirationPortalOldDBContext.tblUserM
-                                                           on project.iCreatedBy equals user.iUserId
-                                                           where project.iProjectId == requestId
-                                                           select new ProjectInfoResponse
-                                                           {
-                                                               Id = project.iProjectId,
-                                                               ProjectName = project.sProjectName,
-                                                               Email = project.sEmail,
-                                                               CustomerPhoneNumber = project.sMobile,
-                                                               Address = project.sBuildingName,
-                                                               SalesOfficerPhoneNumber = user.sPhone,
-                                                               DealerPhoneNumber = "12345",
-                                                           }).FirstOrDefaultAsync();
-            return projectInfo;
+            ProjectInfoResponse? projectinfo=await nspirationPortalOldDBContext.tblProjectTx.Join
+                (nspirationPortalOldDBContext.tblUserM,
+                project=>project.iCreatedBy,
+                user=>user.iUserId,
+                (project,user)=>new ProjectInfoResponse
+                {
+                    Id=project.iProjectId,
+                    ProjectName=project.sProjectName,
+                    Email=project.sEmail,
+                    CustomerPhoneNumber=project.sMobile,
+                    Address=project.sBuildingName,
+                    SalesOfficerPhoneNumber=user.sPhone
+                }).Where(projectId=>projectId.Id==requestId).FirstOrDefaultAsync();
+            return projectinfo;
+
+            //ProjectInfoResponse? projectInfo = await (from project in nspirationPortalOldDBContext.tblProjectTx
+            //                                               join user in nspirationPortalOldDBContext.tblUserM
+            //                                               on project.iCreatedBy equals user.iUserId
+            //                                               where project.iProjectId == requestId
+            //                                               select new ProjectInfoResponse
+            //                                               {
+            //                                                   Id = project.iProjectId,
+            //                                                   ProjectName = project.sProjectName,
+            //                                                   Email = project.sEmail,
+            //                                                   CustomerPhoneNumber = project.sMobile,
+            //                                                   Address = project.sBuildingName,
+            //                                                   SalesOfficerPhoneNumber = user.sPhone,
+            //                                                   DealerPhoneNumber = "12345",
+            //                                               }).FirstOrDefaultAsync();
+            //return projectInfo;
         }
 
         public async Task<List<ProjectListResponse>> GetVendorProjectList(ProjectListRequest projRequest)
@@ -100,6 +122,7 @@ namespace Nspiration.BusinessRepository
                             Base64_String = fromGimpRequest.Base64_String,
                             CreatedAt = DateTime.UtcNow,
                             CreatedBy = fromGimpRequest.VendorId,
+                            SVG_String = fromGimpRequest.SVG_String,
                             ImageInstance = new List<ImageInstance>(),
                             Section = GetSection(fromGimpRequest.SVG_String, fromGimpRequest.VendorId)
                         }
@@ -110,6 +133,7 @@ namespace Nspiration.BusinessRepository
                         {
                             TypeId = typeid,
                             SVG_String = fromGimpRequest.SVG_String,
+                            Base64_String=fromGimpRequest.Base64_String,
                             CreatedAt = DateTime.UtcNow,
                             CreatedBy = fromGimpRequest.VendorId,
                         });
@@ -220,16 +244,18 @@ namespace Nspiration.BusinessRepository
                                                {
                                                    SVG_String = p.SVG_String,
                                                    Base64_image = p.Base64_String,
+                                                   ChoiceName=typeId!=5?"Vendor Choice":"Customer Choice",
                                                    projectData = (from s in nspirationDbContext.Section
-                                                                  join sc in nspirationDbContext.SectionColor on s.Id equals sc.Id
+                                                                  join sc in nspirationDbContext.SectionColor on s.Id equals sc.SectionId
                                                                   join c in nspirationDbContext.Color on s.Id equals c.Id
+                                                                  join sh in nspirationDbContext.ShadeCard on c.ShadeCardId equals sh.Id
                                                                   where s.ProjectId == projectId && sc.TypeId == typeId
                                                                   select new PdfProjectReponse
                                                                   {
                                                                       AreaName = s.PathName,
                                                                       ColorCode = c.ShadeCode,
                                                                       ColorName = c.ShadeName,
-                                                                      ShadeCard = c.HexCode
+                                                                      ShadeCardName = sh.Name
                                                                   }).ToList()
                                                }).ToList();
                 PdfDataResponse results = new PdfDataResponse()
@@ -242,6 +268,92 @@ namespace Nspiration.BusinessRepository
             catch (Exception ex)
             {
                 throw new Exception(ex.ToString());
+            }
+        }
+
+        public async Task<PythonRequest> CallPythonFlaskApi(PythonFlaskApiRequest pythonFlaskApiRequest)
+        {
+            using (IDbContextTransaction transaction = nspirationDbContext.Database.BeginTransaction())
+            {
+                SucessOrErrorResponse response = new SucessOrErrorResponse();
+                try
+                {
+                    string flaskApiUrl = "http://127.0.0.1:5000/blend";
+                    foreach (var sectionId in pythonFlaskApiRequest.SectionId)
+                    {
+                        if (nspirationDbContext.SectionColor.Where(x => x.IsActive == true).Any(x => x.SectionId == sectionId && x.TypeId == pythonFlaskApiRequest.TypeId))
+                        {
+                            SectionColor? _sectionColor = nspirationDbContext.SectionColor.Where(x => x.IsActive == true && x.SectionId == sectionId && x.TypeId == pythonFlaskApiRequest.TypeId).FirstOrDefault();
+                            {
+                                _sectionColor.ColorId = pythonFlaskApiRequest.ColorId;
+                                _sectionColor.ModifiedBy = pythonFlaskApiRequest.VendorId;
+                                _sectionColor.ModifiedAt = DateTime.UtcNow;
+                            };
+                            nspirationDbContext.SectionColor.Update(_sectionColor);
+                            await nspirationDbContext.SaveChangesAsync();
+                        }
+                        else
+                        {
+                            SectionColor _sectionColor = new SectionColor()
+                            {
+                                SectionId = sectionId,
+                                TypeId = pythonFlaskApiRequest.TypeId,
+                                ColorId = pythonFlaskApiRequest.ColorId,
+                                IsActive = true,
+                                CreatedAt = DateTime.UtcNow,
+                                CreatedBy = pythonFlaskApiRequest.VendorId,
+                            };
+                            nspirationDbContext.SectionColor.Add(_sectionColor);
+                            await nspirationDbContext.SaveChangesAsync();
+                        }
+                    }                    
+                    PythonRequest? pythonRequest=await nspirationDbContext.Project.Select(project=> new PythonRequest()
+                    {
+                            ProjectId=project.Id,
+                            Base64_String = project.Base64_String,
+                            SVG_String = project.SVG_String,                            
+                            SectionAndColorResponse=project.Section.Join
+                            (nspirationDbContext.SectionColor,
+                            section=>section.Id,
+                            sectionColor=>sectionColor.SectionId,
+                            (section,sectionColor)=>new
+                            {
+                                Section=section, SectionColor=sectionColor,
+                            }).Join(nspirationDbContext.Color,
+                            sectionColor=>sectionColor.SectionColor.ColorId,
+                            color=>color.Id,                            
+                            (sectionColor,color) => new SectionAndColorResponse
+                            {
+                                TypeId=sectionColor.SectionColor.TypeId,                                
+                                PathName= sectionColor.Section.PathName,
+                                ColorCodeId=color.HexCode
+                            }).Where(type=>type.TypeId==pythonFlaskApiRequest.TypeId).ToList()
+                        }).Where(projectId=>projectId.ProjectId==pythonFlaskApiRequest.ProjectId).FirstOrDefaultAsync();
+                    string jsonData = JsonConvert.SerializeObject(pythonRequest);
+                    //// Create a StringContent with JSON payload
+                    var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage flaskApiResponse = await _httpClient.PostAsync(flaskApiUrl, content);
+                    var _base64_String = await flaskApiResponse.Content.ReadAsStringAsync();
+                    //response.Message = await flaskApiResponse.Content.ReadAsStringAsync();
+                    ImageInstance? imageInstance = await nspirationDbContext.ImageInstance.Where(x => x.ProjectId == 36 && x.TypeId == 1).FirstOrDefaultAsync();
+                    {
+                        imageInstance.Base64_String = _base64_String;
+                        imageInstance.ModifiedAt = DateTime.UtcNow;
+                        imageInstance.ModifiedBy = 1;
+                    }
+                    nspirationDbContext.ImageInstance.Update(imageInstance);
+                    await nspirationDbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    //response.Message = "Color Updated Successfully";
+                    return pythonRequest;
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    response.Message = ex.ToString();
+                    return null;
+                }
             }
         }
     }

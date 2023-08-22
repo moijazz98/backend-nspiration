@@ -2,7 +2,7 @@
 
 namespace Nspiration.Migrations
 {
-    [Migration(20230704483398)]
+   //[Migration(202307044833981)]
     public class AddColorTable_20230704483398 : Migration
     {
         public override void Down()
@@ -20,7 +20,8 @@ namespace Nspiration.Migrations
                 .WithColumn("R").AsInt32().NotNullable()
                 .WithColumn("G").AsInt32().NotNullable()
                 .WithColumn("B").AsInt32().NotNullable()
-                .WithColumn("HexCode").AsString().NotNullable();
+                .WithColumn("HexCode").AsString().NotNullable()
+                .WithColumn("ShadeCardId").AsInt32().Nullable().ForeignKey("ShadeCard", "Id");
         }
     }
 }

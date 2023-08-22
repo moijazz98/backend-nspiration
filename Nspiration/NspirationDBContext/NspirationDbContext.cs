@@ -20,5 +20,6 @@ namespace Nspiration.NspirationDBContext
         public DbSet<ImageType> ImageType { get; set; }
         public DbSet<Section> Section { get; set; }
         public DbSet<SectionColor> SectionColor { get; set; }
+        public DbSet<ShadeCard> ShadeCard { get; set; }
     }
 }

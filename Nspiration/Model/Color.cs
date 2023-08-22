@@ -1,4 +1,6 @@
-﻿namespace Nspiration.Model
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Nspiration.Model
 {
     public class Color
     {
@@ -10,6 +12,9 @@
         public int G { get; set; }
         public int B { get; set; }
         public string HexCode { get; set; }
+        public int ShadeCardId { get; set; }
+        [ForeignKey("ShadeCardId")]
+        public ICollection<SectionColor>? SectionColor { get; set; }
 
     }
 }
