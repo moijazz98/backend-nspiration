@@ -36,7 +36,7 @@ namespace Nspiration.BusinessLogic
             return await projectBr.GetprojectSection(pRequest);
         }
 
-        public async Task<List<ProjectRepResponse>> GetprojectRep(long projectId, int typeId)
+        public async Task<ProjectImageResponse> GetprojectRep(long projectId, int typeId)
         {
             return await projectBr.GetprojectRep(projectId, typeId);
         }

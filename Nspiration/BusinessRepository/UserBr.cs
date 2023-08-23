@@ -26,7 +26,6 @@ namespace Nspiration.BusinessRepository
 
             byte[] b = new byte[1];
             string encryptPassword = SimpleHash.ComputeHash(userLoginRequest.Password, "SHA1", b);
-
             var user = nspirationPortalOldDBContext.tblUserM.FirstOrDefault(x => x.sPhone == userLoginRequest.PhoneNumber && x.sPassword == encryptPassword && x.sUserType=="6" && x.cStatus=='A');
             if(user !=  null && user.sPassword==userLoginRequest.Password)
             {

@@ -206,19 +206,30 @@ namespace Nspiration.BusinessRepository
             return result;
         }
 
-        public async Task<List<ProjectRepResponse>> GetprojectRep(long projectId, int typeId)
+        public async Task<ProjectImageResponse?> GetprojectRep(long projectId, int typeId)
         {
-            List<ProjectRepResponse> ProjectRep = await(from p in nspirationDbContext.Project
-                                                        join i in nspirationDbContext.ImageInstance on p.Id equals i.ProjectId
-                                                        where p.Id == projectId && i.TypeId == typeId
-                                                        select new ProjectRepResponse
-                                                        {
-                                                            //Id = p.Id,
-                                                            ExistingProjectId = p.ExistingProjectId,
-                                                            Base64_String = p.Base64_String,
-                                                            SVG_String = p.SVG_String,
-                                                        }).ToListAsync();
-            return ProjectRep;
+            ProjectImageResponse? projectRep = await nspirationDbContext.Project.Join
+                (nspirationDbContext.ImageInstance,
+                project=>project.Id,
+                imageInstance=>imageInstance.ProjectId,
+                (project, imageInstance) =>new ProjectImageResponse
+                {
+                    Id= project.Id,
+                    TypeId=imageInstance.TypeId,
+                    SVG_String=project.SVG_String,
+                    Base64_String=imageInstance.Base64_String,
+                }).Where(x =>x.Id==projectId && x.TypeId==typeId).FirstOrDefaultAsync();
+            return projectRep;
+            //List<ProjectRepResponse> ProjectRep = await(from p in nspirationDbContext.Project
+            //                                            join i in nspirationDbContext.ImageInstance on p.Id equals i.ProjectId
+            //                                            where p.Id == projectId && i.TypeId == typeId
+            //                                            select new ProjectRepResponse
+            //                                            {
+            //                                                ProjectId = p.Id,
+            //                                                Base64_String = i.Base64_String,
+            //                                                SVG_String = p.SVG_String,
+            //                                            }).ToListAsync();
+            //return ProjectRep;
         }
 
         public async Task<PdfDataResponse> GetPdfData(long projectId, int typeId)

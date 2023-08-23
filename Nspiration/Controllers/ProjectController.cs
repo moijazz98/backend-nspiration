@@ -60,7 +60,7 @@ namespace Nspiration.Controllers
             return NoContent();
         }
 
-        [HttpPost("GetprojectRep")]
+        [HttpPost("getprojectimage")]
         public async Task<IActionResult> GetprojectRep(long projectId, int typeId)
         {
             var response = await projectBl.GetprojectRep(projectId, typeId);
